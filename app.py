@@ -4,17 +4,16 @@ import os
 import google.generativeai as genai
 
 # Load Gemini API key
-# Load Gemini API key
-gemini_api_key = os.environ.get("GOOGLE_API_KEY")   # <-- change here
+gemini_api_key = os.environ.get("GOOGLE_API_KEY")
 if not gemini_api_key:
     print("CRITICAL ERROR: GOOGLE_API_KEY environment variable is not set.")
     print("Please set it before running the Flask application.")
 
-
 # Initialize Gemini client
 genai.configure(api_key=gemini_api_key)
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='/')
+# ✅ Static files in same directory
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 @app.route('/')
@@ -43,8 +42,6 @@ def suggest_remedy():
             "Also, advise seeking immediate medical attention for severe or persistent symptoms."
         )
 
-        # Call Gemini (use gemini-pro for text-based reasoning)
-       # Call Gemini using the supported model
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
         ai_suggestion = response.text.strip()
@@ -64,4 +61,6 @@ def suggest_remedy():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
