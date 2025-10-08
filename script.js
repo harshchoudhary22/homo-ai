@@ -13,26 +13,25 @@ document.getElementById('symptomForm').addEventListener('submit', async function
     try {
         console.log('Attempting to fetch remedy suggestions...');
         console.log('Sending request with data:', { age, gender, symptoms, severity });
-        const response = await fetch('http://127.0.0.1:5000/api/suggest-remedy', {
+
+        // ✅ works locally & on Railway
+        const response = await fetch('/api/suggest-remedy', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ age, gender, symptoms, severity })
         });
-        console.log('Response received:', response);
 
         if (!response.ok) {
-            const errorText = await response.text(); // Get more details from response
+            const errorText = await response.text();
             throw new Error(`HTTP error! status: ${response.status}. Details: ${errorText}`);
         }
 
         const data = await response.json();
-        remedyOutput.textContent = `Suggestion received: \n${data.suggestion}`; // Enhanced success message
+        remedyOutput.textContent = `Suggestion received:\n${data.suggestion}`;
     } catch (error) {
-        remedyOutput.textContent = `Error: ${error.message}. Please check the console for more details.`; // Simplified for UI, console.error still logs full error
-        console.error('Fetch error:', error); // Keep detailed error in console
-    } finally {
-        // No specific action needed here for now, as remedyOutput is updated in try/catch
+        remedyOutput.textContent = `Error: ${error.message}. Check console for details.`;
+        console.error('Fetch error:', error);
     }
 });
